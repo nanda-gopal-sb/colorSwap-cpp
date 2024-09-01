@@ -132,6 +132,7 @@ int main()
         if (!pour(tubes, source, dest))
         {
             cout << "Illegal move :(" << "\n";
+            continue;
         }
         if (checkForWin(tubes))
         {
