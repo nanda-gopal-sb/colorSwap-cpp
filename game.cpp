@@ -30,7 +30,7 @@ int random(int i)
     uniform_int_distribution<> dist(1, numberColors); // number generator for colors
     return dist(gen);
 }
-int random()
+int random(double l)
 {
     uniform_int_distribution<> dist(1, capacity); // number generator for how much to fill in each TT
     return dist(gen);
@@ -44,6 +44,8 @@ int pop(testTube *var)
         var->testTube[var->top - 1] = 0;
         var->top--;
     }
+    else
+        temp = -1;
     return temp;
 }
 void push(testTube *var, int val)
@@ -53,7 +55,7 @@ void push(testTube *var, int val)
 }
 void print(testTube var[])
 {
-    system("cls");
+    system("clear");
     for (int i = (capacity - 1); i >= 0; i--)
     {
         for (int j = 0; j < numberTubes; j++)
@@ -65,13 +67,24 @@ void print(testTube var[])
 }
 bool pour(testTube var[], int source, int destination)
 {
+    int temp2 = 0;
     int temp = var[source].testTube[var[source].top - 1];
-    int temp2 = var[destination].testTube[var[destination].top - 1];
+    if (var[destination].top == 0)
+        temp2 = var[destination].testTube[var[destination].top];
+    else
+        temp2 = var[destination].testTube[var[destination].top - 1];
     //  attempting to pour from source to destination
-    while (var[source].testTube[var[source].top - 1] == temp)
+    while (var[source].testTube[var[source].top - 1] == temp && var[destination].testTube[var[destination].top + 1] <= capacity)
     {
-        if (temp == temp2 && var[destination].testTube[var[destination].top + 1] <= capacity)
-            push(&var[destination], pop(&var[source]));
+        if ((temp == temp2 || temp2 == 0) && var[destination].testTube[var[destination].top + 1] <= capacity)
+        {
+            int popNum = pop(&var[source]);
+            if (popNum == -1)
+            {
+                return false;
+            }
+            push(&var[destination], popNum);
+        }
         else
             return false;
     }
@@ -111,7 +124,14 @@ int main()
     testTube tubes[numberTubes];
     for (int i = 0; i < numberTubes; i++)
     {
-        for (int j = 0; j < random(); j++)
+        for (int j = 0; j < capacity; j++)
+        {
+            tubes[i].testTube[j] = 0;
+        }
+    }
+    for (int i = 0; i < numberTubes; i++)
+    {
+        for (int j = 0; j < random(0.111); j++)
         {
             push(&tubes[i], random(0));
         }
